@@ -2,7 +2,7 @@
 
 COMMITHASH=$(git ls-remote https://github.com/PCGamer-Social/mastodon.git HEAD | head -c 7)
 cd ~/mastodon
-echo "[${COMMITHASH}] 📢Enrichment Center より最新版のアップデートを開始します。Enrichment Center スタッフが最善の努力を行っています、重大な事故が発生する可能性があることを覚えておいてください。" | toot
+echo "[${COMMITHASH}] 📢Enrichment Center より最新版のアップデートを開始します。Enrichment Center スタッフが最善の努力を行っていますが、重大な事故が発生する可能性があることを覚えておいてください。" | toot
 git pull
 echo "[${COMMITHASH}] 🗜️データの取得が完了しました。ビルドを開始します。" | toot
 docker-compose build
