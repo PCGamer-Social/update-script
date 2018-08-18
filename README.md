@@ -13,6 +13,13 @@ Update Script
 - [glynnbird/toot](https://github.com/glynnbird/toot)
     - recommend: `npm install -g toot`
 
+## Usage
+
+```shell
+git pull ||  git reset --hard origin/master && chmod +x update.sh
+./update.sh
+```
+
 ## License
 
 - **heyMaster** licensed under [WTFPL](http://www.wtfpl.net/).
