@@ -17,8 +17,9 @@ while true; do
         if [ $DonAlive -eq 302 ]; then
                 break
         fi
-                echo "Check Failed: Retry after 5 sec."
-                sleep 5s
+                echo "Check Failed: Retry after 2 sec."
+                sleep 2s
+                sudo systemctl restart nginx
 done
 
 echo "[${COMMITHASH}] ✅ アップデートが完了しました。Aperture Science の Mastodon ソーシャルテストにご協力いただき、ありがとうございます。" | toot
