@@ -1,11 +1,10 @@
-# heyMaster
-
-へいますたー！
+heyMaster
+===
 
 ## About
 
-- [@akane](https://mstdn.maud.io/@akane) の中身です。
-- [lindwurm/mastodon:hota/master](https://github.com/lindwurm/mastodon/tree/hota/master) から更新します。
+- [@GLaDOS](https://pcgamer.social/@GLaDOS) の中身です。
+- [PCGamer-Social/mastodon:origin/master](https://github.com/PCGamer-Social/mastodon) から更新します。
 
 ## Required
 
@@ -34,11 +33,6 @@
   0. You just DO WHAT THE FUCK YOU WANT TO.
 ```
 
-## Author
+## Original Author
 
-- hota/lindwurm
-    - Mastodon: [@hota@mstdn.maud.io](https://mstdn.maud.io/@hota)
-    - GitHub: [@lindwurm](https://github.com/lindwurm)
-    - Twitter: [@lindwurm](https://twitter.com/lindwurm)
-    - Web: [maud.io](https://maud.io)
-    - Blog: [dev:mordiford](http://dev.maud.io)
+[@lindwurm](https://github.com/lindwurm)

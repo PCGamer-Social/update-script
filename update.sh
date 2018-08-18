@@ -1,25 +1,25 @@
 ﻿#!/bin/bash
 
-COMMITHASH=$(git ls-remote https://github.com/lindwurm/mastodon.git HEAD | head -c 7)
+COMMITHASH=$(git ls-remote https://github.com/PCGamer-Social/mastodon.git HEAD | head -c 7)
 cd mastodon
-echo "[${COMMITHASH}] へいますたー！" | toot
+echo "[${COMMITHASH}] 📢Enrichment Center より最新版のアップデートを開始します。Enrichment Center スタッフが最善の努力を行っています、重大な事故が発生する可能性があることを覚えておいてください。" | toot
 git pull
-echo "[${COMMITHASH}] びるど！" | toot
+echo "[${COMMITHASH}] 🗜️データの取得が完了しました。ビルドを開始します。" | toot
 docker-compose build
-docker-compose run --rm web rails db:migrate
-echo "[${COMMITHASH}] ぷりこんぱいる？" | toot
-docker-compose run --rm web rails assets:precompile
-echo "[${COMMITHASH}] でっぷろーい！" | toot
+# docker-compose run --rm web rails db:migrate
+# echo "[${COMMITHASH}] ぷりこんぱいる？" | toot
+# docker-compose run --rm web rails assets:precompile
+echo "[${COMMITHASH}] 🔜デプロイを開始します。利用可能になるまで、あと、3 秒... 2 秒... 1 秒..." | toot
 docker-compose up -d
 
 while true; do
-        DonAlive=$(curl -s -o /dev/null -I -w "%{http_code}\n" https://mstdn.maud.io/)
+        DonAlive=$(curl -s -o /dev/null -I -w "%{http_code}\n" https://pcgamer.social/)
         if [ $DonAlive -eq 302 ]; then
                 break
         fi
-                echo "しっぱい… 5s後に再試行するよ"
+                echo "Check Failed: Retry after 5 sec."
                 sleep 5s
 done
 
-echo "[${COMMITHASH}] だん!" | toot
+echo "[${COMMITHASH}] ✅アップデートが完了しました。Aperture Science の Mastodon ソーシャルテストにご協力いただき、ありがとうございます。" | toot
 
