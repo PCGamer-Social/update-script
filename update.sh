@@ -6,9 +6,8 @@ echo "[${COMMITHASH}] 📢 Enrichment Center より最新版のアップデー�
 git pull
 echo "[${COMMITHASH}] 🗜️ データの取得が完了しました。ビルドを開始します。" | toot --visibility unlisted
 docker-compose build
-# docker-compose run --rm web rails db:migrate
-# echo "[${COMMITHASH}] ぷりこんぱいる？" | toot --visibility unlisted
-# docker-compose run --rm web rails assets:precompile
+docker-compose run --rm web rails db:migrate
+docker-compose run --rm web bin/tootctl cache clear
 echo "[${COMMITHASH}] 🔜 デプロイを開始します。利用可能になるまで、あと、3 秒... 2 秒... 1 秒..." | toot --visibility unlisted
 docker-compose up -d
 
