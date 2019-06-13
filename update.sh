@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 
 COMMITHASH=$(git ls-remote https://github.com/PCGamer-Social/mastodon.git HEAD | head -c 7)
 cd ~/mastodon
