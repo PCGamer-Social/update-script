@@ -4,15 +4,20 @@ SECONDS=0
 INSTANCE=stellaria.network
 REPOSITORY=https://github.com/stellarianetwork/mastodon
 COMMITHASH=$(git ls-remote ${REPOSITORY}.git HEAD | head -c 7)
+
 cd ~/stellaria
+
 echo "[${COMMITHASH}] アピデ:${REPOSITORY}/tree/${COMMITHASH}" | toot --visibility unlisted
 git fetch
 git reset --hard origin/master
+
 echo "[${COMMITHASH}] Build" | toot --visibility unlisted
 docker-compose build
 echo "[${COMMITHASH}] Buildおわり" | toot --visibility unlisted
+
 docker-compose run --rm web rails db:migrate
 docker-compose run --rm web bin/tootctl cache clear
+
 echo "[${COMMITHASH}] Deploy" | toot --visibility unlisted
 docker-compose up -d
 
