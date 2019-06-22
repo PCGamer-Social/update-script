@@ -1,9 +1,11 @@
 #!/bin/bash
 
 SECONDS=0
-COMMITHASH=$(git ls-remote https://github.com/stellarianetwork/mastodon.git HEAD | head -c 7)
+INSTANCE=stellaria.network
+REPOSITORY=https://github.com/stellarianetwork/mastodon
+COMMITHASH=$(git ls-remote ${REPOSITORY}.git HEAD | head -c 7)
 cd ~/stellaria
-echo "[${COMMITHASH}] アピデ: https://github.com/stellarianetwork/mastodon/tree/${COMMITHASH}" | toot --visibility unlisted
+echo "[${COMMITHASH}] アピデ:${REPOSITORY}/tree/${COMMITHASH}" | toot --visibility unlisted
 git fetch
 git reset --hard origin/master
 echo "[${COMMITHASH}] Build" | toot --visibility unlisted
@@ -16,12 +18,13 @@ docker-compose up -d
 
 while true; do
         sleep 5s
-        DonAlive=$(curl -s -o /dev/null -I -w "%{http_code}\n" https://stellaria.network/)
+        DonAlive=$(curl -s -o /dev/null -I -w "%{http_code}\n" https://${INSTANCE}/)
         if [ $DonAlive -eq 302 ]; then
                 break
         fi
         echo "Check Failed: Retry after 5 sec."
 done
 
+VERSION=curl -s https://${INSTANCE}/api/v1/instance | jq -r '.version'
 TIME=date -u -d @${SECONDS} +"%T"
-echo "[${COMMITHASH}] ✅ Update Time: $TIME" | toot --visibility unlisted
+echo "[${COMMITHASH}] ${VERSION} ✅ Update Time: $TIME" | toot --visibility unlisted
