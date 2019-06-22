@@ -30,6 +30,6 @@ while true; do
         echo "Check Failed: Retry after 5 sec."
 done
 
-VERSION=curl -s https://${INSTANCE}/api/v1/instance | jq -r '.version'
-TIME=date -u -d @${SECONDS} +"%T"
+VERSION=$(curl -s https://${INSTANCE}/api/v1/instance | jq -r '.version')
+TIME=$(date -u -d @${SECONDS} +"%T")
 echo "[${COMMITHASH}] ${VERSION} ✅ Update Time: $TIME" | toot --visibility unlisted
