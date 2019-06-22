@@ -9,6 +9,7 @@ Update Script
 
 - git
 - docker-compose
+- jq
 - [glynnbird/toot](https://github.com/glynnbird/toot)
     - recommend: `npm install -g toot`
 
