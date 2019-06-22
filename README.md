@@ -3,8 +3,7 @@ Update Script
 
 ## About
 
-- [@GLaDOS](https://pcgamer.social/@GLaDOS) の中身です。
-- [PCGamer-Social/mastodon:origin/master](https://github.com/PCGamer-Social/mastodon) から更新します。
+- [stellarianetwork/mastodon:origin/master](https://github.com/stellarianetwork/mastodon) から更新します。
 
 ## Required
 
@@ -16,13 +15,14 @@ Update Script
 ## Usage
 
 ```shell
-git pull ||  git reset --hard origin/master && chmod +x update.sh
-./update.sh
+git clone https://github.com/stellarianetwork/update-script
+chmod +x ./update-script/update.sh
+./update-script/update.sh
 ```
 
 ## License
 
-- **heyMaster** licensed under [WTFPL](http://www.wtfpl.net/).
+- **Update Script** licensed under [WTFPL](http://www.wtfpl.net/).
 
 ```
             DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
