@@ -16,9 +16,8 @@ Update Script
 ## Usage
 
 ```shell
-git clone https://github.com/stellarianetwork/update-script
-chmod +x ./update-script/update.sh
-./update-script/update.sh
+git pull ||  git reset --hard origin/master && chmod +x update.sh
+./update.sh
 ```
 
 ## License
