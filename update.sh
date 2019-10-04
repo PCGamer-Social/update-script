@@ -11,9 +11,9 @@ echo "[${COMMITHASH}] アピデ:${REPOSITORY}/tree/${COMMITHASH}" | toot --visib
 git fetch
 git reset --hard origin/master
 
-echo "[${COMMITHASH}] Build" | toot --visibility unlisted
-docker-compose build
-echo "[${COMMITHASH}] Buildおわり" | toot --visibility unlisted
+echo "[${COMMITHASH}] Pull" | toot --visibility unlisted
+docker-compose pull
+echo "[${COMMITHASH}] Pullおわり" | toot --visibility unlisted
 
 docker-compose run --rm web rails db:migrate
 docker-compose run --rm web bin/tootctl cache clear
