@@ -1,14 +1,26 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 SECONDS=0
-INSTANCE=stellaria.network
-REPOSITORY=https://github.com/stellarianetwork/mastodon
-COMMITHASH=$(git ls-remote ${REPOSITORY}.git HEAD | head -c 7)
-DOCKERREPO=registry.hub.docker.com/eaaaaaaaaaaai/stellaria-mastodon
-DOCKERTAG=latest
 
-cd ~/stellaria
+# env読み込み
+if [[ ! -f .env ]]; then
+	echo ".envファイルが見つかりません" 1>&2
+	exit 1
+fi
+. .env
 
+echo "---"
+echo "MASTODON_PATH: ${MASTODON_PATH}"
+echo "INSTANCE: ${INSTANCE}"
+echo "REPOSITORY: ${REPOSITORY}"
+echo "DOCKERREPO: ${DOCKERREPO}"
+echo "DOCKERTAG: ${DOCKERTAG}"
+echo "TOOT_VISIBLITY: ${TOOT_VISIBLITY}"
+echo "---"
+
+# 引数の処理
+major=false
+hub=false
 while getopts :mh argument; do
 	case $argument in
 		m) major=true ;;
@@ -18,26 +30,32 @@ while getopts :mh argument; do
 	esac
 done
 
+function send_toot() {
+	echo "[${commithash}] $1" | toot --visibility ${TOOT_VISIBLITY}
+}
 
-echo "[${COMMITHASH}] アピデするよ ${REPOSITORY}/tree/${COMMITHASH}" | toot --visibility unlisted
+cd ${MASTODON_PATH}
+
+commithash=$(git ls-remote ${REPOSITORY}.git HEAD | head -c 7)
+send_toot "${MESSAGE_BEGIN}"
 git fetch
 git reset --hard origin/master
 
-if [ "$hub" = "true" ]; then
-	echo "[${COMMITHASH}] Container Pull..." | toot --visibility unlisted
-	dokcer pull ${DOCKERREPO}:${DOCKERTAG}
+if [ $hub = "true" ]; then
+	send_toot "${MESSAGE_PULL_BEGIN} ${REPOSITORY}/tree/${commithash}"
+	docker pull ${DOCKERREPO}:${DOCKERTAG}
 	imageid=`docker images ${DOCKERREPO}:${DOCKERTAG} --format "{{.ID}}" | awk 'END{print}'`
-	echo "[${COMMITHASH}] Container Pull Finished. DOCKER IMAGE ID: ${imageid}" | toot --visibility unlisted
+	send_toot "${MESSAGE_PULL_DONE} ${imageid}"
 else
-	echo "[${COMMITHASH}] Build..." | toot --visibility unlisted
+	send_toot "${MESSAGE_BUILD_BEGIN}"
 	docker-compose build
-	echo "[${COMMITHASH}] Build Finished." | toot --visibility unlisted
+	send_toot "${MESSAGE_BUILD_DONE}"
 fi
 
-if [ "$major" = "true" ]; then
-	echo "[${COMMITHASH}] Pre-Deployment DB Migration..." | toot --visibility unlisted
+if [ $major = "true" ]; then
+	send_toot "${MESSAGE_PRE_DEPLOYMENT_DB_MIGRATION_BEGIN}"
 	docker-compose run --rm -e SKIP_POST_DEPLOYMENT_MIGRATIONS=true web rails db:migrate
-	dokcer-compose up -d
+	docker-compose up -d
 
 	while true; do
 		sleep 5s
@@ -47,13 +65,15 @@ if [ "$major" = "true" ]; then
 		fi
 		echo "Check Failed: Retry after 5 sec."
 	done
+	send_toot "${MESSAGE_PRE_DEPLOYMENT_DB_MIGRATION_DONE}"
 fi
 
-echo "[${COMMITHASH}] DB Migration..." | toot --visibility unlisted
+send_toot "${MESSAGE_DB_MIGRATION_BEGIN}"
 docker-compose run --rm web bin/tootctl cache clear
 docker-compose run --rm web rails db:migrate
+send_toot "${MESSAGE_DB_MIGRATION_DONE}"
 
-echo "[${COMMITHASH}] Deploy..." | toot --visibility unlisted
+send_toot "${MESSAGE_DEPLOY_BEGIN}"
 docker-compose up -d
 
 while true; do
@@ -65,6 +85,7 @@ while true; do
 	echo "Check Failed: Retry after 5 sec."
 done
 
-VERSION=$(curl -s https://${INSTANCE}/api/v1/instance | jq -r '.version')
-TIME=$(date -u -d @${SECONDS} +"%T")
-echo "[${COMMITHASH}] ${VERSION} ✅ Update Time: $TIME" | toot --visibility unlisted
+current_version=$(curl -s https://${INSTANCE}/api/v1/instance | jq -r '.version')
+spend_time=$(date -u -d @${SECONDS} +"%T")
+send_toot "${current_version} ${MESSAGE_DEPLOY_DONE} $spend_time"
+echo "Finished."

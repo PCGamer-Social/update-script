@@ -17,7 +17,14 @@ Update Script
 
 ```shell
 git pull ||  git reset --hard origin/master && chmod +x update.sh
-./update.sh
+cp .env.example .env
+nano .env
+./update.sh [-m] [-h]
+```
+
+```shell
+-m    Major Version Update, Will Do Pre-Deployment DB Migration.
+-h    Use Docker Hub Image.
 ```
 
 ## License
