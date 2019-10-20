@@ -3,7 +3,8 @@ Update Script
 
 ## About
 
-- [stellarianetwork/mastodon:origin/master](https://github.com/stellarianetwork/mastodon) から更新します。
+- [@GLaDOS](https://pcgamer.social/@GLaDOS) の中身です。
+- [PCGamer-Social/mastodon:origin/master](https://github.com/PCGamer-Social/mastodon) から更新します。
 
 ## Required
 
