@@ -4,12 +4,15 @@ SECONDS=0
 INSTANCE=stellaria.network
 REPOSITORY=https://github.com/stellarianetwork/mastodon
 COMMITHASH=$(git ls-remote ${REPOSITORY}.git HEAD | head -c 7)
+DOCKERREPO=registry.hub.docker.com/eaaaaaaaaaaai/stellaria-mastodon
+DOCKERTAG=latest
 
 cd ~/stellaria
 
-while getopts :m argument; do
+while getopts :mh argument; do
 	case $argument in
 		m) major=true ;;
+		h) hub=true ;;
 		*) echo "正しくない引数が指定されました。" 1>&2
 			exit 1 ;;
 	esac
@@ -20,8 +23,16 @@ echo "[${COMMITHASH}] アピデするよ ${REPOSITORY}/tree/${COMMITHASH}" | too
 git fetch
 git reset --hard origin/master
 
-echo "[${COMMITHASH}] Pull..." | toot --visibility unlisted
-docker-compose pull
+if [ "$hub" = "true" ]; then
+	echo "[${COMMITHASH}] Container Pull..." | toot --visibility unlisted
+	dokcer pull ${DOCKERREPO}:${DOCKERTAG}
+	imageid=`docker images ${DOCKERREPO}:${DOCKERTAG} --format "{{.ID}}" | awk 'END{print}'`
+	echo "[${COMMITHASH}] Container Pull Finished. DOCKER IMAGE ID: ${imageid}" | toot --visibility unlisted
+else
+	echo "[${COMMITHASH}] Build..." | toot --visibility unlisted
+	docker-compose build
+	echo "[${COMMITHASH}] Build Finished." | toot --visibility unlisted
+fi
 
 if [ "$major" = "true" ]; then
 	echo "[${COMMITHASH}] Pre-Deployment DB Migration..." | toot --visibility unlisted
