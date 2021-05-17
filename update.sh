@@ -69,10 +69,6 @@ while true; do
 	echo "Check Failed: Retry after 5 sec."
 done
 
-current_version=$(curl -s https://${INSTANCE}/api/v1/instance | jq -r '.version')
-spend_time=$(date -u -d @${SECONDS} +"%T")
-send_toot "${current_version} ${MESSAGE_DEPLOY_DONE} $spend_time"
-
 docker-compose run --rm web bin/tootctl cache clear
 send_toot "${MESSAGE_DB_MIGRATION_BEGIN}"
 docker-compose run --rm web rails db:migrate
@@ -80,13 +76,7 @@ send_toot "${MESSAGE_DB_MIGRATION_DONE}"
 
 docker-compose up -d
 
-while true; do
-	sleep 5s
-	DonAlive=$(curl -s -o /dev/null -I -w "%{http_code}\n" https://${INSTANCE}/)
-	if [ $DonAlive -eq 302 ]; then
-		break
-	fi
-	echo "Check Failed: Retry after 5 sec."
-done
-
+current_version=$(curl -s https://${INSTANCE}/api/v1/instance | jq -r '.version')
+spend_time=$(date -u -d @${SECONDS} +"%T")
+send_toot "${current_version} ${MESSAGE_DEPLOY_DONE} $spend_time"
 echo "Finished."
