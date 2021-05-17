@@ -42,10 +42,9 @@ git fetch
 git reset --hard origin/master
 
 if [ $hub = "true" ]; then
-	send_toot "${MESSAGE_PULL_BEGIN} ${REPOSITORY}/tree/${commithash}"
-	docker pull ${DOCKERREPO}:${DOCKERTAG}
-	imageid=`docker images ${DOCKERREPO}:${DOCKERTAG} --format "{{.ID}}" | awk 'END{print}'`
-	send_toot "${MESSAGE_PULL_DONE} ${imageid}"
+	send_toot "${MESSAGE_PULL_BEGIN}"
+	docker-compose pull
+	send_toot "${MESSAGE_PULL_DONE}"
 else
 	send_toot "${MESSAGE_BUILD_BEGIN}"
 	docker-compose build
