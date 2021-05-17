@@ -54,26 +54,11 @@ fi
 if [ $major = "true" ]; then
 	send_toot "${MESSAGE_PRE_DEPLOYMENT_DB_MIGRATION_BEGIN}"
 	docker-compose run --rm -e SKIP_POST_DEPLOYMENT_MIGRATIONS=true web rails db:migrate
-	docker-compose up -d
-
-	while true; do
-		sleep 5s
-		DonAlive=$(curl -s -o /dev/null -I -w "%{http_code}\n" https://${INSTANCE}/)
-		if [ $DonAlive -eq 302 ]; then
-			break
-		fi
-		echo "Check Failed: Retry after 5 sec."
-	done
 	send_toot "${MESSAGE_PRE_DEPLOYMENT_DB_MIGRATION_DONE}"
 fi
 
-send_toot "${MESSAGE_DB_MIGRATION_BEGIN}"
-docker-compose run --rm web bin/tootctl cache clear
-docker-compose run --rm web rails db:migrate
-send_toot "${MESSAGE_DB_MIGRATION_DONE}"
-
 send_toot "${MESSAGE_DEPLOY_BEGIN}"
-docker-compose up -d
+docker-compose down && docker-compose up -d
 
 while true; do
 	sleep 5s
@@ -87,4 +72,21 @@ done
 current_version=$(curl -s https://${INSTANCE}/api/v1/instance | jq -r '.version')
 spend_time=$(date -u -d @${SECONDS} +"%T")
 send_toot "${current_version} ${MESSAGE_DEPLOY_DONE} $spend_time"
+
+docker-compose run --rm web bin/tootctl cache clear
+send_toot "${MESSAGE_DB_MIGRATION_BEGIN}"
+docker-compose run --rm web rails db:migrate
+send_toot "${MESSAGE_DB_MIGRATION_DONE}"
+
+docker-compose up -d
+
+while true; do
+	sleep 5s
+	DonAlive=$(curl -s -o /dev/null -I -w "%{http_code}\n" https://${INSTANCE}/)
+	if [ $DonAlive -eq 302 ]; then
+		break
+	fi
+	echo "Check Failed: Retry after 5 sec."
+done
+
 echo "Finished."
